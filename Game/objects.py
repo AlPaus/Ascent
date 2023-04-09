@@ -22,7 +22,8 @@ class ChestLid(pygame.sprite.Sprite):
                 self.image = pygame.image.load('resources/chests/blue_chest/open/left.png')
             else:
                 self.image = pygame.image.load('resources/chests/blue_chest/open/right.png')
-        self.image = pygame.transform.rotozoom(self.image, 0, scale)
+        w, h = int(self.image.get_size()[0] * scale), int(self.image.get_size()[1] * scale)
+        self.image = pygame.transform.scale(self.image, (w, h))
         self.rect = self.image.get_rect()
         if position == 'left':
             self.rect.right = x
@@ -44,21 +45,24 @@ class Chest(pygame.sprite.Sprite):
         if (type == 0):
             self.image = pygame.image.load('resources/chests/blue_chest/0.png')
             scale = cfg.MEASURE / self.image.get_size()[0]
-            self.image = pygame.transform.rotozoom(self.image, 0, scale)
+            w, h = int(self.image.get_size()[0] * scale), int(self.image.get_size()[1] * scale)
+            self.image = pygame.transform.scale(self.image, (w, h))
             self.body = pygame.image.load('resources/chests/blue_chest/open/body.png')
-            self.body = pygame.transform.rotozoom(self.body, 0, cfg.MEASURE / self.body.get_size()[0])
+            self.body = pygame.transform.scale(self.body, (w, h))
         elif (type == 1):
             self.image = pygame.image.load('resources/chests/blue_chest/0.png')
             scale = cfg.MEASURE / self.image.get_size()[0]
-            self.image = pygame.transform.rotozoom(self.image, 0, scale)
+            w, h = int(self.image.get_size()[0] * scale), int(self.image.get_size()[1] * scale)
+            self.image = pygame.transform.scale(self.image, (w, h))
             self.body = pygame.image.load('resources/chests/blue_chest/open/body.png')
-            self.body = pygame.transform.rotozoom(self.body, 0, cfg.MEASURE / self.body.get_size()[0])
+            self.body = pygame.transform.scale(self.body, (w, h))
         else:
             self.image = pygame.image.load('resources/chests/blue_chest/0.png')
             scale = cfg.MEASURE / self.image.get_size()[0]
-            self.image = pygame.transform.rotozoom(self.image, 0, scale)
+            w, h = int(self.image.get_size()[0] * scale), int(self.image.get_size()[1] * scale)
+            self.image = pygame.transform.scale(self.image, (w, h))
             self.body = pygame.image.load('resources/chests/blue_chest/open/body.png')
-            self.body = pygame.transform.rotozoom(self.body, 0, cfg.MEASURE / self.body.get_size()[0])
+            self.body = pygame.transform.scale(self.body, (w, h))
 
         self.rect = self.image.get_rect(topleft=(x, y))
         self.type = type
