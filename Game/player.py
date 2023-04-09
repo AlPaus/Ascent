@@ -62,6 +62,7 @@ class Player(AnimatedSprite):
         self.reachable_weapon = None
         self.last_shockwave = 0
         self.money = 0
+        self.key =  pygame.key.get_pressed()
 
     def recieve_damage(self, amount):
       if self.game.time - self.last_damage > cfg.IMMORTALITY_TIME and not self.game.time - self.last_jump < cfg.JUMP_TIME:
@@ -85,7 +86,7 @@ class Player(AnimatedSprite):
     def find_closest_weapon(self):
       s_lw = sorted(self.game.lying_weapons, key=lambda o: (o.rect.centerx - self.game.p.rect.centerx) ** 2 + (o.rect.centery - self.game.p.rect.centery) ** 2)
       lw = s_lw[0]
-      if ((lw.rect.centerx-self.rect.centerx)*(lw.rect.centerx-self.rect.centerx) + (lw.rect.centery-self.rect.centery) * (lw.rect.centery-self.rect.centery)) ** 0.5 <= cfg.MEASURE:
+      if ((lw.rect.centerx-self.rect.centerx)*(lw.rect.centerx-self.rect.centerx) + (lw.rect.centery-self.rect.centery) * (lw.rect.centery-self.rect.centery)) ** 0.5 <= cfg.MEASURE + 2:
         self.reachable_weapon = lw
       else:
         self.reachable_weapon = None
@@ -121,62 +122,62 @@ class Player(AnimatedSprite):
       
     def update(self):
         self.find_closest_weapon()
+        self.key = pygame.key.get_pressed()
         is_jumping = self.game.time - self.last_jump < cfg.JUMP_TIME
         mkeys = self.game.mkeys # 0 - лкм, 1 - колесико, 2 - пкм
         mx, my = self.game.mouse_pos
         self.angle = self.get_angle(mx, my)
       
         self.speedx, self.speedy = 0, 0
-        key = pygame.key.get_pressed()
         if self.weapon:
           self.is_reloading = self.weapon.reloading
-        if False and key[pygame.K_f] and not self.last_key[pygame.K_f]:
+        if False and self.key[pygame.K_f] and not self.last_key[pygame.K_f]:
           e = Effect(self.game, self.rect.x, self.rect.y, 'explode1', 0, self.team)
           e.anim_speed = 200
           self.game.bullets.add(e)
           self.game.sprites.add(e)
 
           
-        if key[pygame.K_1] and not self.last_key[pygame.K_1]:
+        if self.key[pygame.K_1] and not self.last_key[pygame.K_1]:
           self.change_weapon(1)
-        elif key[pygame.K_2] and not self.last_key[pygame.K_2]:
+        elif self.key[pygame.K_2] and not self.last_key[pygame.K_2]:
           self.change_weapon(2)
-        elif key[pygame.K_3] and not self.last_key[pygame.K_3]:
+        elif self.key[pygame.K_3] and not self.last_key[pygame.K_3]:
           self.change_weapon(3)
 
           
         if is_jumping:
           self.speedx, self.speedy = self.jump_dir
         else:
-          if key[cfg.BUTTONS['forward']] and key[cfg.BUTTONS['right']]:
+          if self.key[cfg.BUTTONS['forward']] and self.key[cfg.BUTTONS['right']]:
             self.speedx = math.sqrt(2)/2*cfg.PLAYER_SPEED
             self.speedy = math.sqrt(2)/-2*cfg.PLAYER_SPEED 
-          elif key[cfg.BUTTONS['forward']] and key[cfg.BUTTONS['left']]:
+          elif self.key[cfg.BUTTONS['forward']] and self.key[cfg.BUTTONS['left']]:
             self.speedx = math.sqrt(2)/-2*cfg.PLAYER_SPEED
             self.speedy = math.sqrt(2)/-2*cfg.PLAYER_SPEED
             
-          elif key[cfg.BUTTONS['back']] and key[cfg.BUTTONS['left']]:
+          elif self.key[cfg.BUTTONS['back']] and self.key[cfg.BUTTONS['left']]:
             self.speedx = math.sqrt(2)/-2*cfg.PLAYER_SPEED
             self.speedy = math.sqrt(2)/2*cfg.PLAYER_SPEED
-          elif key[cfg.BUTTONS['back']] and key[cfg.BUTTONS['right']]:
+          elif self.key[cfg.BUTTONS['back']] and self.key[cfg.BUTTONS['right']]:
             self.speedx = math.sqrt(2)/2*cfg.PLAYER_SPEED
             self.speedy = math.sqrt(2)/2*cfg.PLAYER_SPEED
           else:
-            if key[cfg.BUTTONS['forward']]:
+            if self.key[cfg.BUTTONS['forward']]:
                 self.speedy = -cfg.PLAYER_SPEED
-            elif key[cfg.BUTTONS['back']]:
+            elif self.key[cfg.BUTTONS['back']]:
                 self.speedy = cfg.PLAYER_SPEED
-            if key[cfg.BUTTONS['left']]:
+            if self.key[cfg.BUTTONS['left']]:
                 self.speedx = -cfg.PLAYER_SPEED
-            elif key[cfg.BUTTONS['right']]:
+            elif self.key[cfg.BUTTONS['right']]:
                 self.speedx = cfg.PLAYER_SPEED
-          if key[pygame.K_SPACE] and not is_jumping and self.game.time - self.last_jump > cfg.JUMP_CD:
+          if self.key[pygame.K_SPACE] and not is_jumping and self.game.time - self.last_jump > cfg.JUMP_CD:
             self.last_jump = self.game.time
             is_jumping = True
             self.jump_dir = (self.speedx*cfg.JUMP_SPEED, self.speedy*cfg.JUMP_SPEED)
-          if key[cfg.BUTTONS['take_weapon']] and not self.last_key[cfg.BUTTONS['take_weapon']]:
+          if self.key[cfg.BUTTONS['take_weapon']] and not self.last_key[cfg.BUTTONS['take_weapon']]:
             self.pick_up_weapon()
-          if key[cfg.BUTTONS['shockwave']] and self.game.time - self.last_shockwave >= cfg.SHOCKWAVE_CD:
+          if self.key[cfg.BUTTONS['shockwave']] and self.game.time - self.last_shockwave >= cfg.SHOCKWAVE_CD:
             s = Shockwave(self.game, self.team)
             self.last_shockwave = self.game.time
             self.game.sprites.add(s)
@@ -206,7 +207,7 @@ class Player(AnimatedSprite):
           self.game.to_menu()
           
         super().update()
-        self.last_key = key
+        self.last_key = self.key
         if self.angle <= 90 or self.angle >= 270:
           self.orientation = False
         else:

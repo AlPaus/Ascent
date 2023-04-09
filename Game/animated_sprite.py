@@ -227,13 +227,7 @@ class MasterGroup(Group):
       elif type(sprite).__name__ == 'LyingWeapon':
         
         screen.blit(sprite.image, sprite.rect.move(cx, cy))
-        if sprite == self.game.p.reachable_weapon:
-          ol = sprite.outline.copy()
-          n = 0
-          for point in ol:
-            ol[n] = (point[0] + sprite.rect.x + cx, point[1] + sprite.rect.y + cy)
-            n += 1
-          pygame.draw.polygon(screen, 'white', ol, 1)
+
           
       elif type(sprite).__name__ == "Player":
         im = sprite.image.copy()
@@ -259,4 +253,12 @@ class MasterGroup(Group):
         screen.blit(sprite.image, tmp.move(cx, cy))
       else:
         screen.blit(sprite.image, sprite.rect.move(cx, cy))
+
+      if sprite == self.game.p.reachable_weapon:
+        ol = sprite.outline.copy()
+        n = 0
+        for point in ol:
+          ol[n] = (point[0] + sprite.rect.x + cx, point[1] + sprite.rect.y + cy)
+          n += 1
+        pygame.draw.polygon(screen, 'white', ol, 1)
   
